@@ -4,188 +4,320 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Muscle Building Plan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mantine/core@7.11.0/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mantine/notifications@7.11.0/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px; /* Max width for readability */
+        :root {
+            --mantine-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+            --mantine-color-body: #fff;
+            --mantine-color-text: #25262b; /* mantine-gray-9 */
+            --mantine-color-gray-0: #f8f9fa;
+            --mantine-color-gray-1: #f1f3f5;
+            --mantine-color-gray-2: #e9ecef;
+            --mantine-color-gray-3: #dee2e6;
+            --mantine-color-gray-5: #adb5bd;
+            --mantine-color-gray-6: #868e96;
+            --mantine-color-gray-7: #495057;
+            --mantine-color-gray-9: #25262b;
+            --mantine-color-blue-filled: #1971c2; /* mantine-blue-7 */
+            --mantine-color-blue-light: #d0ebff; /* mantine-blue-1 */
+            --mantine-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --mantine-radius-md: 0.5rem; /* 8px */
+            --mantine-spacing-md: 1rem; /* 16px */
+            --mantine-spacing-lg: 1.5rem; /* 24px */
+            --mantine-spacing-xl: 2rem; /* 32px */
+        }
+
+        body {
+            font-family: var(--mantine-font-family);
+            background-color: var(--mantine-color-gray-0);
+            color: var(--mantine-color-text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+        }
+
+        .mantine-container {
+            max-width: 1100px; /* Equivalent to Mantine's lg breakpoint */
             margin-left: auto;
             margin-right: auto;
-            height: 300px; /* Base height */
-            max-height: 350px; /* Max height to prevent overflow */
+            padding: var(--mantine-spacing-md);
         }
-        @media (min-width: 768px) { /* Medium screens and up */
-            .chart-container {
-                height: 350px;
-            }
+        @media (min-width: 576px) { /* sm */
+            .mantine-container { padding: var(--mantine-spacing-lg); }
         }
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            margin: 0.25rem;
-            border-radius: 0.375rem;
+        @media (min-width: 992px) { /* lg */
+            .mantine-container { padding: var(--mantine-spacing-xl); }
+        }
+
+        .mantine-header {
+            text-align: center;
+            margin-bottom: var(--mantine-spacing-xl);
+        }
+        .mantine-header h1 {
+            font-size: 2.25rem; /* ~36px */
+            font-weight: 700;
+            color: var(--mantine-color-gray-9);
+            margin-bottom: 0.5rem;
+        }
+        .mantine-header p {
+            font-size: 1.125rem; /* ~18px */
+            color: var(--mantine-color-gray-6);
+        }
+
+        .mantine-tabs-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: var(--mantine-spacing-lg);
+            border-bottom: 2px solid var(--mantine-color-gray-3);
+        }
+
+        .mantine-tab-button {
+            padding: 0.625rem 1.25rem; /* 10px 20px */
+            margin: 0.125rem;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 0.25rem 0.25rem 0 0; /* 4px top radius */
             font-weight: 500;
-            color: #4B5563; /* gray-600 */
-            background-color: #F3F4F6; /* gray-100 */
-            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.9375rem; /* 15px */
+            color: var(--mantine-color-gray-7);
+            background-color: transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            position: relative;
+            bottom: -2px; /* Align with bottom border of tabs-list */
         }
-        .tab-button:hover {
-            background-color: #E5E7EB; /* gray-200 */
+        .mantine-tab-button:hover {
+            color: var(--mantine-color-text);
+            background-color: var(--mantine-color-gray-0);
         }
-        .tab-button.tab-active {
-            background-color: #3B82F6; /* blue-500 */
-            color: white;
+        .mantine-tab-button.tab-active {
+            color: var(--mantine-color-blue-filled);
+            border-color: var(--mantine-color-gray-3) var(--mantine-color-gray-3) var(--mantine-color-body) var(--mantine-color-gray-3);
+            font-weight: 600;
         }
-        .content-section {
-            display: none; /* Hidden by default, shown by JS */
+
+        .mantine-tab-panel { /* Mimics Mantine Paper/Card */
+            display: none;
+            padding: var(--mantine-spacing-lg);
+            background-color: var(--mantine-color-body);
+            border-radius: var(--mantine-radius-md);
+            box-shadow: var(--mantine-shadow-sm);
+            border: 1px solid var(--mantine-color-gray-2);
         }
-        .content-section.active {
+        .mantine-tab-panel.active {
             display: block;
         }
-        .exercise-item {
+        .mantine-tab-panel h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600;
+            color: var(--mantine-color-gray-9);
+            margin-bottom: 0.25rem;
+        }
+        .mantine-tab-panel .panel-subtitle {
+            font-size: 0.875rem; /* 14px */
+            color: var(--mantine-color-gray-6);
+            margin-bottom: var(--mantine-spacing-md);
+        }
+        .mantine-tab-panel .panel-intro {
+            color: var(--mantine-color-gray-7);
+            margin-bottom: var(--mantine-spacing-lg);
+            font-size: 1rem; /* 16px */
+        }
+
+        .mantine-exercise-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .mantine-exercise-list li {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
-            background-color: #F9FAFB; /* gray-50 */
-            border-radius: 0.375rem;
+            padding: 0.75rem var(--mantine-spacing-md);
+            background-color: var(--mantine-color-gray-0);
+            border-radius: var(--mantine-radius-md);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--mantine-color-gray-2);
             transition: background-color 0.2s;
         }
-        .exercise-item:hover {
-            background-color: #F3F4F6; /* gray-100 */
+        .mantine-exercise-list li:hover {
+            background-color: var(--mantine-color-gray-1);
+        }
+        .mantine-exercise-list li span:first-child {
+            color: var(--mantine-color-gray-7);
+        }
+        .mantine-exercise-list li span:last-child {
+            font-weight: 500;
+            color: var(--mantine-color-gray-9);
+        }
+        
+        .mantine-guidance-list {
+            list-style: disc;
+            padding-left: 1.25rem; /* 20px */
+            margin-top: var(--mantine-spacing-md);
+        }
+        .mantine-guidance-list li {
+            margin-bottom: 0.5rem;
+            color: var(--mantine-color-gray-7);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        
+        .mantine-footer {
+            text-align: center;
+            margin-top: var(--mantine-spacing-xl);
+            padding-top: var(--mantine-spacing-lg);
+            border-top: 1px solid var(--mantine-color-gray-2);
+            font-size: 0.875rem; /* 14px */
+            color: var(--mantine-color-gray-6);
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans अंतर्निहित">
-    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
-        <header class="text-center mb-8 md:mb-12">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Massive Muscle Building Plan</h1>
-            <p class="text-md sm:text-lg text-gray-600 mt-2">Your 7-Day Interactive Workout Guide</p>
+<body>
+    <div class="mantine-container">
+        <header class="mantine-header">
+            <h1>Massive Muscle Building Plan</h1>
+            <p>Your 7-Day Interactive Workout Guide</p>
         </header>
 
-        <nav id="workoutTabs" class="mb-6 sm:mb-8 flex flex-wrap justify-center">
-            <button data-tab="day1" class="tab-button tab-active">Day 1</button>
-            <button data-tab="day2" class="tab-button">Day 2</button>
-            <button data-tab="day3" class="tab-button">Day 3</button>
-            <button data-tab="day4" class="tab-button">Day 4</button>
-            <button data-tab="day5" class="tab-button">Day 5</button>
-            <button data-tab="day6" class="tab-button">Day 6</button>
-            <button data-tab="day7" class="tab-button">Day 7</button>
-            <button data-tab="overview" class="tab-button">Overview</button>
-            <button data-tab="guidance" class="tab-button">Guidance</button>
+        <nav id="workoutTabs" class="mantine-tabs-list">
+            <button data-tab="day1" class="mantine-tab-button tab-active">Day 1</button>
+            <button data-tab="day2" class="mantine-tab-button">Day 2</button>
+            <button data-tab="day3" class="mantine-tab-button">Day 3</button>
+            <button data-tab="day4" class="mantine-tab-button">Day 4</button>
+            <button data-tab="day5" class="mantine-tab-button">Day 5</button>
+            <button data-tab="day6" class="mantine-tab-button">Day 6</button>
+            <button data-tab="day7" class="mantine-tab-button">Day 7</button>
+            <button data-tab="overview" class="mantine-tab-button">Overview</button>
+            <button data-tab="guidance" class="mantine-tab-button">Guidance</button>
         </nav>
 
         <main id="workoutContent">
-            <section id="content-day1" class="content-section active p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 1: Upper Body Push</h2>
-                <p class="text-sm text-gray-500 mb-4">(Chest, Shoulders, Triceps)</p>
-                <p class="text-gray-600 mb-6">This introductory section for Day 1 explains that the focus is on pushing movements to build strength and size in your chest, shoulders, and triceps. Engage these muscles with controlled form for maximum effectiveness.</p>
-                <ul class="space-y-3">
-                    <li class="exercise-item"><span>Incline Barbell Press</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Flat Dumbbell Press</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Machine Chest Press (Decline or Flat)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Dumbbell Shoulder Press (Seated)</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Side Lateral Raise Machine</span><span class="font-medium text-gray-700">3 sets x 12-20 reps</span></li>
-                    <li class="exercise-item"><span>Overhead Cable Triceps Extension (Rope)</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Close-Grip Machine Press (for Triceps)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Single Arm Triceps Pushdown (Cable, Underhand Grip)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
+            <section id="content-day1" class="mantine-tab-panel active">
+                <h2>Day 1: Upper Body Push</h2>
+                <p class="panel-subtitle">(Chest, Shoulders, Triceps)</p>
+                <p class="panel-intro">This introductory section for Day 1 explains that the focus is on pushing movements to build strength and size in your chest, shoulders, and triceps. Engage these muscles with controlled form for maximum effectiveness.</p>
+                <ul class="mantine-exercise-list">
+                    <li><span>Incline Barbell Press</span><span>4 sets x 8-12 reps</span></li>
+                    <li><span>Flat Dumbbell Press</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Machine Chest Press (Decline or Flat)</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Dumbbell Shoulder Press (Seated)</span><span>4 sets x 8-12 reps</span></li>
+                    <li><span>Side Lateral Raise Machine</span><span>3 sets x 12-20 reps</span></li>
+                    <li><span>Overhead Cable Triceps Extension (Rope)</span><span>4 sets x 10-15 reps</span></li>
+                    <li><span>Close-Grip Machine Press (for Triceps)</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Single Arm Triceps Pushdown (Cable, Underhand Grip)</span><span>3 sets x 12-15 reps per arm</span></li>
                 </ul>
             </section>
 
-            <section id="content-day2" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 2: Lower Body</h2>
-                <p class="text-sm text-gray-500 mb-4">(Quads, Hamstrings, Glutes)</p>
-                <p class="text-gray-600 mb-6">This section introduces Day 2, dedicated to targeting all major muscle groups in your lower body. Prepare for a challenging session focusing on quadriceps, hamstrings, and glutes to build a strong foundation.</p>
-                <ul class="space-y-3">
-                    <li class="exercise-item"><span>Leg Press (Vary Foot Placement)</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Hack Squat Machine</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Romanian Deadlifts (Barbell or Dumbbell)</span><span class="font-medium text-gray-700">4 sets x 10-12 reps</span></li>
-                    <li class="exercise-item"><span>Seated Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
-                    <li class="exercise-item"><span>Lying Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
-                    <li class="exercise-item"><span>Glute Ham Raise Machine (or Hyperextensions)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
-                    <li class="exercise-item"><span>Standing Calf Raise Machine</span><span class="font-medium text-gray-700">4 sets x 15-25 reps</span></li>
-                    <li class="exercise-item"><span>Seated Calf Raise Machine</span><span class="font-medium text-gray-700">4 sets x 15-25 reps</span></li>
+            <section id="content-day2" class="mantine-tab-panel">
+                <h2>Day 2: Lower Body</h2>
+                <p class="panel-subtitle">(Quads, Hamstrings, Glutes)</p>
+                <p class="panel-intro">This section introduces Day 2, dedicated to targeting all major muscle groups in your lower body. Prepare for a challenging session focusing on quadriceps, hamstrings, and glutes to build a strong foundation.</p>
+                <ul class="mantine-exercise-list">
+                    <li><span>Leg Press (Vary Foot Placement)</span><span>4 sets x 10-15 reps</span></li>
+                    <li><span>Hack Squat Machine</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Romanian Deadlifts (Barbell or Dumbbell)</span><span>4 sets x 10-12 reps</span></li>
+                    <li><span>Seated Leg Curls</span><span>3 sets x 12-18 reps</span></li>
+                    <li><span>Lying Leg Curls</span><span>3 sets x 12-18 reps</span></li>
+                    <li><span>Glute Ham Raise Machine (or Hyperextensions)</span><span>3 sets x 12-15 reps</span></li>
+                    <li><span>Standing Calf Raise Machine</span><span>4 sets x 15-25 reps</span></li>
+                    <li><span>Seated Calf Raise Machine</span><span>4 sets x 15-25 reps</span></li>
                 </ul>
             </section>
 
-            <section id="content-day3" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 3: Upper Body Pull</h2>
-                <p class="text-sm text-gray-500 mb-4">(Back, Biceps)</p>
-                <p class="text-gray-600 mb-6">Welcome to Day 3. This part of the application outlines the pulling exercises designed to develop a strong, wide back and powerful biceps. Focus on squeezing the target muscles with each repetition.</p>
-                <ul class="space-y-3">
-                    <li class="exercise-item"><span>Pull-ups (or Assisted/Lat Pulldown)</span><span class="font-medium text-gray-700">4 sets x AMRAP or 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Bent-Over Barbell Rows (Underhand Grip)</span><span class="font-medium text-gray-700">3 sets x 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Seated Cable Row (Wide Neutral Grip)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Single-Arm Dumbbell Row</span><span class="font-medium text-gray-700">3 sets x 10-12 reps per arm</span></li>
-                    <li class="exercise-item"><span>Machine Pullovers (or Dumbbell)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
-                    <li class="exercise-item"><span>EZ Bar Curls</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Dumbbell Concentration Curls (Seated)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
-                    <li class="exercise-item"><span>Machine Bicep Curl</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
-                    <li class="exercise-item"><span>Reverse Barbell Curls</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+            <section id="content-day3" class="mantine-tab-panel">
+                <h2>Day 3: Upper Body Pull</h2>
+                <p class="panel-subtitle">(Back, Biceps)</p>
+                <p class="panel-intro">Welcome to Day 3. This part of the application outlines the pulling exercises designed to develop a strong, wide back and powerful biceps. Focus on squeezing the target muscles with each repetition.</p>
+                <ul class="mantine-exercise-list">
+                    <li><span>Pull-ups (or Assisted/Lat Pulldown)</span><span>4 sets x AMRAP or 8-12 reps</span></li>
+                    <li><span>Bent-Over Barbell Rows (Underhand Grip)</span><span>3 sets x 8-12 reps</span></li>
+                    <li><span>Seated Cable Row (Wide Neutral Grip)</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Single-Arm Dumbbell Row</span><span>3 sets x 10-12 reps per arm</span></li>
+                    <li><span>Machine Pullovers (or Dumbbell)</span><span>3 sets x 12-15 reps</span></li>
+                    <li><span>EZ Bar Curls</span><span>4 sets x 10-15 reps</span></li>
+                    <li><span>Dumbbell Concentration Curls (Seated)</span><span>3 sets x 12-15 reps per arm</span></li>
+                    <li><span>Machine Bicep Curl</span><span>3 sets x 12-18 reps</span></li>
+                    <li><span>Reverse Barbell Curls</span><span>3 sets x 12-15 reps</span></li>
                 </ul>
             </section>
 
-            <section id="content-day4" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 4: Rest or Active Recovery</h2>
-                <p class="text-gray-600 mb-6">This section emphasizes the importance of Day 4. It's dedicated to active recovery or complete rest, which is vital for muscle repair, growth, and preventing overtraining. Listen to your body.</p>
-                <div class="text-center py-8">
-                     <span class="text-6xl">🛌</span>
-                    <p class="mt-4 text-lg text-gray-700">Take this day to fully recover. Light cardio like walking, or some stretching, is acceptable if desired.</p>
+            <section id="content-day4" class="mantine-tab-panel">
+                <h2>Day 4: Rest or Active Recovery</h2>
+                <p class="panel-intro">This section emphasizes the importance of Day 4. It's dedicated to active recovery or complete rest, which is vital for muscle repair, growth, and preventing overtraining. Listen to your body.</p>
+                <div style="text-align: center; padding: 2rem 0;">
+                     <span style="font-size: 4rem;">🛌</span>
+                    <p style="margin-top: 1rem; font-size: 1.125rem; color: var(--mantine-color-gray-7);">Take this day to fully recover. Light cardio like walking, or some stretching, is acceptable if desired.</p>
                 </div>
             </section>
 
-            <section id="content-day5" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 5: Full Body Hypertrophy</h2>
-                <p class="text-gray-600 mb-6">Day 5 offers a comprehensive session hitting all major muscle groups. This full-body approach aims to stimulate overall muscle hypertrophy and enhance your weekly training volume.</p>
-                 <ul class="space-y-3">
-                    <li class="exercise-item"><span>Barbell Squats</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
-                    <li class="exercise-item"><span>Incline Dumbbell Press</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
-                    <li class="exercise-item"><span>Lat Pulldowns (Close Neutral Grip)</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
-                    <li class="exercise-item"><span>Leg Press</span><span class="font-medium text-gray-700">2 sets x 15-20 reps</span></li>
-                    <li class="exercise-item"><span>Machine Shoulder Press</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Lying Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
-                    <li class="exercise-item"><span>Dumbbell Hammer Curls</span><span class="font-medium text-gray-700">2 sets x 12-15 reps</span></li>
-                    <li class="exercise-item"><span>Triceps Dips (Machine or Bench)</span><span class="font-medium text-gray-700">2 sets x 12-15 reps (or to failure)</span></li>
+            <section id="content-day5" class="mantine-tab-panel">
+                <h2>Day 5: Full Body Hypertrophy</h2>
+                <p class="panel-intro">Day 5 offers a comprehensive session hitting all major muscle groups. This full-body approach aims to stimulate overall muscle hypertrophy and enhance your weekly training volume.</p>
+                 <ul class="mantine-exercise-list">
+                    <li><span>Barbell Squats</span><span>3 sets x 10-12 reps</span></li>
+                    <li><span>Incline Dumbbell Press</span><span>3 sets x 10-12 reps</span></li>
+                    <li><span>Lat Pulldowns (Close Neutral Grip)</span><span>3 sets x 10-12 reps</span></li>
+                    <li><span>Leg Press</span><span>2 sets x 15-20 reps</span></li>
+                    <li><span>Machine Shoulder Press</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Lying Leg Curls</span><span>3 sets x 12-15 reps</span></li>
+                    <li><span>Dumbbell Hammer Curls</span><span>2 sets x 12-15 reps</span></li>
+                    <li><span>Triceps Dips (Machine or Bench)</span><span>2 sets x 12-15 reps (or to failure)</span></li>
                 </ul>
             </section>
 
-            <section id="content-day6" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 6: Shoulders & Arms Focus</h2>
-                <p class="text-gray-600 mb-6">This section details the Day 6 workout, which provides a dedicated focus on sculpting your shoulders and building bigger arms. It's an opportunity to isolate these key areas for enhanced development.</p>
-                <ul class="space-y-3">
-                    <li class="exercise-item"><span>Seated Barbell Shoulder Press (to front)</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Dumbbell Lateral Raises (Standing)</span><span class="font-medium text-gray-700">4 sets x 12-18 reps</span></li>
-                    <li class="exercise-item"><span>Cable Front Raises (Rope or Straight Bar)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
-                    <li class="exercise-item"><span>Reverse Fly Machine (or Bent-Over Dumbbell)</span><span class="font-medium text-gray-700">4 sets x 15-20 reps</span></li>
-                    <li class="exercise-item"><span>Close Grip Barbell Bench Press</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
-                    <li class="exercise-item"><span>Skullcrushers (EZ Bar, flat/slight decline)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
-                    <li class="exercise-item"><span>Alternating Dumbbell Bicep Curls (Standing)</span><span class="font-medium text-gray-700">4 sets x 10-12 reps per arm</span></li>
-                    <li class="exercise-item"><span>Preacher Curl Machine (Single Arm if possible)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
+            <section id="content-day6" class="mantine-tab-panel">
+                <h2>Day 6: Shoulders & Arms Focus</h2>
+                <p class="panel-intro">This section details the Day 6 workout, which provides a dedicated focus on sculpting your shoulders and building bigger arms. It's an opportunity to isolate these key areas for enhanced development.</p>
+                <ul class="mantine-exercise-list">
+                    <li><span>Seated Barbell Shoulder Press (to front)</span><span>4 sets x 8-12 reps</span></li>
+                    <li><span>Dumbbell Lateral Raises (Standing)</span><span>4 sets x 12-18 reps</span></li>
+                    <li><span>Cable Front Raises (Rope or Straight Bar)</span><span>3 sets x 12-15 reps</span></li>
+                    <li><span>Reverse Fly Machine (or Bent-Over Dumbbell)</span><span>4 sets x 15-20 reps</span></li>
+                    <li><span>Close Grip Barbell Bench Press</span><span>4 sets x 8-12 reps</span></li>
+                    <li><span>Skullcrushers (EZ Bar, flat/slight decline)</span><span>3 sets x 10-15 reps</span></li>
+                    <li><span>Alternating Dumbbell Bicep Curls (Standing)</span><span>4 sets x 10-12 reps per arm</span></li>
+                    <li><span>Preacher Curl Machine (Single Arm if possible)</span><span>3 sets x 12-15 reps per arm</span></li>
                 </ul>
             </section>
 
-            <section id="content-day7" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 7: Rest</h2>
-                 <p class="text-gray-600 mb-6">This final day of the week is for rest. As this section explains, rest is absolutely crucial for muscle recovery and growth. Allow your body to fully rebuild and prepare for the next cycle of training.</p>
-                <div class="text-center py-8">
-                    <span class="text-6xl">🎉</span>
-                    <p class="mt-4 text-lg text-gray-700">Congratulations on completing the week! Use this day for complete rest and recovery.</p>
+            <section id="content-day7" class="mantine-tab-panel">
+                <h2>Day 7: Rest</h2>
+                 <p class="panel-intro">This final day of the week is for rest. As this section explains, rest is absolutely crucial for muscle recovery and growth. Allow your body to fully rebuild and prepare for the next cycle of training.</p>
+                <div style="text-align: center; padding: 2rem 0;">
+                    <span style="font-size: 4rem;">🎉</span>
+                    <p style="margin-top: 1rem; font-size: 1.125rem; color: var(--mantine-color-gray-7);">Congratulations on completing the week! Use this day for complete rest and recovery.</p>
                 </div>
             </section>
 
-            <section id="content-overview" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Workout Plan Overview</h2>
-                <p class="text-gray-600 mb-6">This section provides a visual summary of your workout plan. The chart below illustrates the number of exercises scheduled for each training day, giving you a quick look at the weekly volume distribution.</p>
+            <section id="content-overview" class="mantine-tab-panel">
+                <h2>Workout Plan Overview</h2>
+                <p class="panel-intro">This section provides a visual summary of your workout plan. The chart below illustrates the number of exercises scheduled for each training day, giving you a quick look at the weekly volume distribution.</p>
                 <div class="chart-container">
                     <canvas id="exercisesPerDayChart"></canvas>
                 </div>
             </section>
 
-            <section id="content-guidance" class="content-section p-6 bg-white rounded-lg shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">General Guidance</h2>
-                <p class="text-gray-600 mb-6">This part of the application contains important notes and general advice from the original plan to help you maximize your results and train safely. Adhering to these guidelines is key for consistent progress.</p>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <section id="content-guidance" class="mantine-tab-panel">
+                <h2>General Guidance</h2>
+                <p class="panel-intro">This part of the application contains important notes and general advice from the original plan to help you maximize your results and train safely. Adhering to these guidelines is key for consistent progress.</p>
+                <ul class="mantine-guidance-list">
                     <li>Warm-up sets are not included; perform 1-2 light warm-up sets before your first working set of each exercise.</li>
                     <li>Aim for progressive overload: try to increase weight, reps, or sets over time.</li>
                     <li>Rest 60-90 seconds between sets for most exercises. For heavier compound lifts, you can rest up to 2 minutes.</li>
@@ -195,15 +327,15 @@
             </section>
         </main>
 
-        <footer class="text-center mt-10 sm:mt-16 py-6 border-t border-gray-300">
-            <p class="text-gray-600 text-sm">&copy; <span id="currentYear"></span> Interactive Workout Plan. Created by plpk.</p>
+        <footer class="mantine-footer">
+            <p>&copy; <span id="currentYear"></span> Interactive Workout Plan. Created by plpkdev@gmail.com.</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const tabs = document.querySelectorAll('.tab-button');
-            const contentSections = document.querySelectorAll('.content-section');
+            const tabs = document.querySelectorAll('.mantine-tab-button');
+            const contentSections = document.querySelectorAll('.mantine-tab-panel');
             const currentYearSpan = document.getElementById('currentYear');
 
             if (currentYearSpan) {
@@ -237,18 +369,16 @@
                 });
             });
 
-            // Initialize with the first tab active
             if (tabs.length > 0) {
                 setActiveTab(tabs[0]);
             }
             
-            let exercisesChart = null; // To hold the chart instance
+            let exercisesChart = null;
 
             function renderExercisesPerDayChart() {
                 const ctx = document.getElementById('exercisesPerDayChart');
                 if (!ctx) return;
 
-                // Destroy existing chart if it exists, to prevent re-rendering issues
                 if (exercisesChart) {
                     exercisesChart.destroy();
                 }
@@ -257,25 +387,28 @@
                     labels: ['Day 1 (Push)', 'Day 2 (Legs)', 'Day 3 (Pull)', 'Day 5 (Full Body)', 'Day 6 (Shoulders/Arms)'],
                     datasets: [{
                         label: 'Number of Exercises',
-                        data: [8, 8, 9, 8, 8], // Day 1: 8, Day 2: 8, Day 3: 9, Day 5: 8, Day 6: 8
+                        data: [8, 8, 9, 8, 8],
                         backgroundColor: [
-                            'rgba(59, 130, 246, 0.6)', // blue-500
-                            'rgba(16, 185, 129, 0.6)', // emerald-500
-                            'rgba(239, 68, 68, 0.6)',  // red-500
-                            'rgba(245, 158, 11, 0.6)', // amber-500
-                            'rgba(139, 92, 246, 0.6)'  // violet-500
+                            'rgba(25, 113, 194, 0.6)', // Mantine Blue 7
+                            'rgba(51, 154, 102, 0.6)', // Mantine Green 6
+                            'rgba(208, 50, 36, 0.6)',  // Mantine Red 7
+                            'rgba(240, 140, 0, 0.6)',  // Mantine Orange 6
+                            'rgba(128, 74, 217, 0.6)'  // Mantine Grape 6
                         ],
                         borderColor: [
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(239, 68, 68, 1)',
-                            'rgba(245, 158, 11, 1)',
-                            'rgba(139, 92, 246, 1)'
+                            'rgba(25, 113, 194, 1)',
+                            'rgba(51, 154, 102, 1)',
+                            'rgba(208, 50, 36, 1)',
+                            'rgba(240, 140, 0, 1)',
+                            'rgba(128, 74, 217, 1)'
                         ],
                         borderWidth: 1
                     }]
                 };
 
+                Chart.defaults.font.family = getComputedStyle(document.body).getPropertyValue('--mantine-font-family').trim();
+                Chart.defaults.color = getComputedStyle(document.body).getPropertyValue('--mantine-color-text').trim();
+                
                 exercisesChart = new Chart(ctx.getContext('2d'), {
                     type: 'bar',
                     data: workoutDaysData,
@@ -287,24 +420,41 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Number of Exercises'
+                                    text: 'Number of Exercises',
+                                    font: { size: 14 }
                                 },
                                 ticks: {
-                                    stepSize: 1 // Ensure integer ticks for exercise counts
+                                    stepSize: 1,
+                                    color: getComputedStyle(document.body).getPropertyValue('--mantine-color-gray-6').trim()
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.body).getPropertyValue('--mantine-color-gray-3').trim()
                                 }
                             },
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Workout Day'
+                                    text: 'Workout Day',
+                                    font: { size: 14 }
+                                },
+                                ticks: {
+                                     color: getComputedStyle(document.body).getPropertyValue('--mantine-color-gray-6').trim()
+                                },
+                                grid: {
+                                    display: false
                                 }
                             }
                         },
                         plugins: {
                             legend: {
-                                display: false // Hiding legend as it's a single dataset
+                                display: false
                             },
                             tooltip: {
+                                backgroundColor: getComputedStyle(document.body).getPropertyValue('--mantine-color-gray-9').trim(),
+                                titleFont: { size: 14 },
+                                bodyFont: { size: 12 },
+                                padding: 10,
+                                cornerRadius: 4,
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
@@ -322,10 +472,6 @@
                     }
                 });
             }
-             // Initial render if overview tab is active by default (it's not, but good for testing)
-            // if (document.querySelector('.tab-button.tab-active[data-tab="overview"]')) {
-            //    renderExercisesPerDayChart();
-            // }
         });
     </script>
 </body>
