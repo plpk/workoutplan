@@ -1,1 +1,2 @@
 # workoutplan
+This plan is for personal use. You can adapt it to your needs and use it as an interactive webpage. I am not offering workout advice and do not suggest you do these workoputs. I'm, just sharing so you can setup your own workout.

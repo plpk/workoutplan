@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Muscle Building Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 350px; /* Max height to prevent overflow */
+        }
+        @media (min-width: 768px) { /* Medium screens and up */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.25rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            color: #4B5563; /* gray-600 */
+            background-color: #F3F4F6; /* gray-100 */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-button:hover {
+            background-color: #E5E7EB; /* gray-200 */
+        }
+        .tab-button.tab-active {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+        }
+        .content-section {
+            display: none; /* Hidden by default, shown by JS */
+        }
+        .content-section.active {
+            display: block;
+        }
+        .exercise-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: #F9FAFB; /* gray-50 */
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .exercise-item:hover {
+            background-color: #F3F4F6; /* gray-100 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans अंतर्निहित">
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Massive Muscle Building Plan</h1>
+            <p class="text-md sm:text-lg text-gray-600 mt-2">Your 7-Day Interactive Workout Guide</p>
+        </header>
+
+        <nav id="workoutTabs" class="mb-6 sm:mb-8 flex flex-wrap justify-center">
+            <button data-tab="day1" class="tab-button tab-active">Day 1</button>
+            <button data-tab="day2" class="tab-button">Day 2</button>
+            <button data-tab="day3" class="tab-button">Day 3</button>
+            <button data-tab="day4" class="tab-button">Day 4</button>
+            <button data-tab="day5" class="tab-button">Day 5</button>
+            <button data-tab="day6" class="tab-button">Day 6</button>
+            <button data-tab="day7" class="tab-button">Day 7</button>
+            <button data-tab="overview" class="tab-button">Overview</button>
+            <button data-tab="guidance" class="tab-button">Guidance</button>
+        </nav>
+
+        <main id="workoutContent">
+            <section id="content-day1" class="content-section active p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 1: Upper Body Push</h2>
+                <p class="text-sm text-gray-500 mb-4">(Chest, Shoulders, Triceps)</p>
+                <p class="text-gray-600 mb-6">This introductory section for Day 1 explains that the focus is on pushing movements to build strength and size in your chest, shoulders, and triceps. Engage these muscles with controlled form for maximum effectiveness.</p>
+                <ul class="space-y-3">
+                    <li class="exercise-item"><span>Incline Barbell Press</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Flat Dumbbell Press</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Machine Chest Press (Decline or Flat)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Dumbbell Shoulder Press (Seated)</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Side Lateral Raise Machine</span><span class="font-medium text-gray-700">3 sets x 12-20 reps</span></li>
+                    <li class="exercise-item"><span>Overhead Cable Triceps Extension (Rope)</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Close-Grip Machine Press (for Triceps)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Single Arm Triceps Pushdown (Cable, Underhand Grip)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
+                </ul>
+            </section>
+
+            <section id="content-day2" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 2: Lower Body</h2>
+                <p class="text-sm text-gray-500 mb-4">(Quads, Hamstrings, Glutes)</p>
+                <p class="text-gray-600 mb-6">This section introduces Day 2, dedicated to targeting all major muscle groups in your lower body. Prepare for a challenging session focusing on quadriceps, hamstrings, and glutes to build a strong foundation.</p>
+                <ul class="space-y-3">
+                    <li class="exercise-item"><span>Leg Press (Vary Foot Placement)</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Hack Squat Machine</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Romanian Deadlifts (Barbell or Dumbbell)</span><span class="font-medium text-gray-700">4 sets x 10-12 reps</span></li>
+                    <li class="exercise-item"><span>Seated Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
+                    <li class="exercise-item"><span>Lying Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
+                    <li class="exercise-item"><span>Glute Ham Raise Machine (or Hyperextensions)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+                    <li class="exercise-item"><span>Standing Calf Raise Machine</span><span class="font-medium text-gray-700">4 sets x 15-25 reps</span></li>
+                    <li class="exercise-item"><span>Seated Calf Raise Machine</span><span class="font-medium text-gray-700">4 sets x 15-25 reps</span></li>
+                </ul>
+            </section>
+
+            <section id="content-day3" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 3: Upper Body Pull</h2>
+                <p class="text-sm text-gray-500 mb-4">(Back, Biceps)</p>
+                <p class="text-gray-600 mb-6">Welcome to Day 3. This part of the application outlines the pulling exercises designed to develop a strong, wide back and powerful biceps. Focus on squeezing the target muscles with each repetition.</p>
+                <ul class="space-y-3">
+                    <li class="exercise-item"><span>Pull-ups (or Assisted/Lat Pulldown)</span><span class="font-medium text-gray-700">4 sets x AMRAP or 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Bent-Over Barbell Rows (Underhand Grip)</span><span class="font-medium text-gray-700">3 sets x 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Seated Cable Row (Wide Neutral Grip)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Single-Arm Dumbbell Row</span><span class="font-medium text-gray-700">3 sets x 10-12 reps per arm</span></li>
+                    <li class="exercise-item"><span>Machine Pullovers (or Dumbbell)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+                    <li class="exercise-item"><span>EZ Bar Curls</span><span class="font-medium text-gray-700">4 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Dumbbell Concentration Curls (Seated)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
+                    <li class="exercise-item"><span>Machine Bicep Curl</span><span class="font-medium text-gray-700">3 sets x 12-18 reps</span></li>
+                    <li class="exercise-item"><span>Reverse Barbell Curls</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+                </ul>
+            </section>
+
+            <section id="content-day4" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 4: Rest or Active Recovery</h2>
+                <p class="text-gray-600 mb-6">This section emphasizes the importance of Day 4. It's dedicated to active recovery or complete rest, which is vital for muscle repair, growth, and preventing overtraining. Listen to your body.</p>
+                <div class="text-center py-8">
+                     <span class="text-6xl">🛌</span>
+                    <p class="mt-4 text-lg text-gray-700">Take this day to fully recover. Light cardio like walking, or some stretching, is acceptable if desired.</p>
+                </div>
+            </section>
+
+            <section id="content-day5" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 5: Full Body Hypertrophy</h2>
+                <p class="text-gray-600 mb-6">Day 5 offers a comprehensive session hitting all major muscle groups. This full-body approach aims to stimulate overall muscle hypertrophy and enhance your weekly training volume.</p>
+                 <ul class="space-y-3">
+                    <li class="exercise-item"><span>Barbell Squats</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
+                    <li class="exercise-item"><span>Incline Dumbbell Press</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
+                    <li class="exercise-item"><span>Lat Pulldowns (Close Neutral Grip)</span><span class="font-medium text-gray-700">3 sets x 10-12 reps</span></li>
+                    <li class="exercise-item"><span>Leg Press</span><span class="font-medium text-gray-700">2 sets x 15-20 reps</span></li>
+                    <li class="exercise-item"><span>Machine Shoulder Press</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Lying Leg Curls</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+                    <li class="exercise-item"><span>Dumbbell Hammer Curls</span><span class="font-medium text-gray-700">2 sets x 12-15 reps</span></li>
+                    <li class="exercise-item"><span>Triceps Dips (Machine or Bench)</span><span class="font-medium text-gray-700">2 sets x 12-15 reps (or to failure)</span></li>
+                </ul>
+            </section>
+
+            <section id="content-day6" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-1">Day 6: Shoulders & Arms Focus</h2>
+                <p class="text-gray-600 mb-6">This section details the Day 6 workout, which provides a dedicated focus on sculpting your shoulders and building bigger arms. It's an opportunity to isolate these key areas for enhanced development.</p>
+                <ul class="space-y-3">
+                    <li class="exercise-item"><span>Seated Barbell Shoulder Press (to front)</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Dumbbell Lateral Raises (Standing)</span><span class="font-medium text-gray-700">4 sets x 12-18 reps</span></li>
+                    <li class="exercise-item"><span>Cable Front Raises (Rope or Straight Bar)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps</span></li>
+                    <li class="exercise-item"><span>Reverse Fly Machine (or Bent-Over Dumbbell)</span><span class="font-medium text-gray-700">4 sets x 15-20 reps</span></li>
+                    <li class="exercise-item"><span>Close Grip Barbell Bench Press</span><span class="font-medium text-gray-700">4 sets x 8-12 reps</span></li>
+                    <li class="exercise-item"><span>Skullcrushers (EZ Bar, flat/slight decline)</span><span class="font-medium text-gray-700">3 sets x 10-15 reps</span></li>
+                    <li class="exercise-item"><span>Alternating Dumbbell Bicep Curls (Standing)</span><span class="font-medium text-gray-700">4 sets x 10-12 reps per arm</span></li>
+                    <li class="exercise-item"><span>Preacher Curl Machine (Single Arm if possible)</span><span class="font-medium text-gray-700">3 sets x 12-15 reps per arm</span></li>
+                </ul>
+            </section>
+
+            <section id="content-day7" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Day 7: Rest</h2>
+                 <p class="text-gray-600 mb-6">This final day of the week is for rest. As this section explains, rest is absolutely crucial for muscle recovery and growth. Allow your body to fully rebuild and prepare for the next cycle of training.</p>
+                <div class="text-center py-8">
+                    <span class="text-6xl">🎉</span>
+                    <p class="mt-4 text-lg text-gray-700">Congratulations on completing the week! Use this day for complete rest and recovery.</p>
+                </div>
+            </section>
+
+            <section id="content-overview" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Workout Plan Overview</h2>
+                <p class="text-gray-600 mb-6">This section provides a visual summary of your workout plan. The chart below illustrates the number of exercises scheduled for each training day, giving you a quick look at the weekly volume distribution.</p>
+                <div class="chart-container">
+                    <canvas id="exercisesPerDayChart"></canvas>
+                </div>
+            </section>
+
+            <section id="content-guidance" class="content-section p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">General Guidance</h2>
+                <p class="text-gray-600 mb-6">This part of the application contains important notes and general advice from the original plan to help you maximize your results and train safely. Adhering to these guidelines is key for consistent progress.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Warm-up sets are not included; perform 1-2 light warm-up sets before your first working set of each exercise.</li>
+                    <li>Aim for progressive overload: try to increase weight, reps, or sets over time.</li>
+                    <li>Rest 60-90 seconds between sets for most exercises. For heavier compound lifts, you can rest up to 2 minutes.</li>
+                    <li>Focus on controlled form and full range of motion.</li>
+                    <li>Adjust weights to hit the target rep ranges. The last couple of reps should be challenging but performed with good form.</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer class="text-center mt-10 sm:mt-16 py-6 border-t border-gray-300">
+            <p class="text-gray-600 text-sm">&copy; <span id="currentYear"></span> Interactive Workout Plan. Created for you.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contentSections = document.querySelectorAll('.content-section');
+            const currentYearSpan = document.getElementById('currentYear');
+
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            function setActiveTab(selectedTab) {
+                tabs.forEach(tab => {
+                    if (tab === selectedTab) {
+                        tab.classList.add('tab-active');
+                    } else {
+                        tab.classList.remove('tab-active');
+                    }
+                });
+
+                contentSections.forEach(section => {
+                    if (section.id === `content-${selectedTab.dataset.tab}`) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    setActiveTab(tab);
+                    if (tab.dataset.tab === 'overview') {
+                        renderExercisesPerDayChart();
+                    }
+                });
+            });
+
+            // Initialize with the first tab active
+            if (tabs.length > 0) {
+                setActiveTab(tabs[0]);
+            }
+            
+            let exercisesChart = null; // To hold the chart instance
+
+            function renderExercisesPerDayChart() {
+                const ctx = document.getElementById('exercisesPerDayChart');
+                if (!ctx) return;
+
+                // Destroy existing chart if it exists, to prevent re-rendering issues
+                if (exercisesChart) {
+                    exercisesChart.destroy();
+                }
+                
+                const workoutDaysData = {
+                    labels: ['Day 1 (Push)', 'Day 2 (Legs)', 'Day 3 (Pull)', 'Day 5 (Full Body)', 'Day 6 (Shoulders/Arms)'],
+                    datasets: [{
+                        label: 'Number of Exercises',
+                        data: [8, 8, 9, 8, 8], // Day 1: 8, Day 2: 8, Day 3: 9, Day 5: 8, Day 6: 8
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.6)', // blue-500
+                            'rgba(16, 185, 129, 0.6)', // emerald-500
+                            'rgba(239, 68, 68, 0.6)',  // red-500
+                            'rgba(245, 158, 11, 0.6)', // amber-500
+                            'rgba(139, 92, 246, 0.6)'  // violet-500
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(139, 92, 246, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+
+                exercisesChart = new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: workoutDaysData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Exercises'
+                                },
+                                ticks: {
+                                    stepSize: 1 // Ensure integer ticks for exercise counts
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Workout Day'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false // Hiding legend as it's a single dataset
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + ' exercises';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+             // Initial render if overview tab is active by default (it's not, but good for testing)
+            // if (document.querySelector('.tab-button.tab-active[data-tab="overview"]')) {
+            //    renderExercisesPerDayChart();
+            // }
+        });
+    </script>
+</body>
+</html>
